@@ -1,0 +1,14 @@
+{
+  "name": "mmic-home",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "node server.js"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^8.0.0",
+    "http-server": "^14.1.1",
+    "jsdom": "^22.1.0",
+    "vitest": "^1.6.1"
+  }
+}
