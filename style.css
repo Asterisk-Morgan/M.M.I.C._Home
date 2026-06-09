@@ -19,11 +19,19 @@ a.target-link {
 }
 
 a.target-link.black {
-	color: rgb(0, 89, 255)55);
+	color: rgb(0, 89, 255);
 }
 
 a.target-link.blue {
 	color: rgb(0, 8, 255);
+}
+
+img {
+	width: 240px;
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 0 auto;
 }
 
 /* Circular animated background */
