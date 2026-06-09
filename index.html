@@ -51,7 +51,20 @@
     <h2>今日の材質</h2>
     <p id="fortune">ここに結果が出ます</p>
 
-    
+    <!-- Quiz UI -->
+    <div id="quiz-box">
+        <h2 id="progress"></h2>
+        <div id="question-text"></div>
+        <ul id="options-list"></ul>
+        <div id="feedback-box" style="display: none;"></div>
+        <button id="next-button" style="display: none;" onclick="nextQuestion()">次へ</button>
+    </div>
+
+    <div id="score-box" style="display: none;">
+        <h2>研究完了</h2>
+        <p id="final-score"></p>
+        <button onclick="restartQuiz()">再検証</button>
+    </div>
     
 </body>
 
@@ -64,6 +77,99 @@
 
   // HTML の id="fortune" の要素を取り出して中身を書き換える
   document.getElementById("fortune").textContent = result;
-</script>
 
+// 【クイズデータ】問題、選択肢、正解インデックス（0から始まる）、解説
+const quizData = [
+    {
+        question: "直径",
+        options: ["φ40mm", "φ50mm", "φ25mm", "φ70mm"],
+        answer: 0,
+        rationale: "直径は円の中心から円周までの距離を2倍した長さで、φ40mmは一般的なメダルのサイズとしてよく使用されます。"
+    },
+    {
+        question: "厚さ",
+        options: ["t2mm", "t4mm", "t7mm", "t10mm"],
+        answer: 2,
+        rationale: "厚さはメダルの奥行きを示すもので、一般的には7mmがよく使用されます。"
+    }
+];
+
+let currentQuestionIndex = 0;
+let score = 0;
+
+// クイズの表示更新
+function loadQuiz() {
+    resetState();
+    
+    const currentQuiz = quizData[currentQuestionIndex];
+    // id部にデータを注入
+    document.getElementById("progress").innerText = `問題 ${currentQuestionIndex + 1} / ${quizData.length}`;
+    document.getElementById("question-text").innerHTML = currentQuiz.question;
+    
+    // 選択肢ボタンを動的に作成して ul (id="options-list") に追加
+    currentQuiz.options.forEach((option, index) => {
+        const li = document.createElement("li");
+        const button = document.createElement("button");
+        button.innerText = option;
+        button.onclick = () => selectAnswer(index);
+        li.appendChild(button);
+        document.getElementById("options-list").appendChild(li);
+    });
+}
+
+// 表示の初期化
+function resetState() {
+    document.getElementById("feedback-box").style.display = "none";
+    document.getElementById("next-button").style.display = "none";
+    document.getElementById("options-list").innerHTML = "";
+}
+
+// 回答が選択されたときの正誤判定処理
+function selectAnswer(selectedIndex) {
+    const currentQuiz = quizData[currentQuestionIndex];
+    const feedbackBox = document.getElementById("feedback-box");
+    
+    // 二重クリック防止のため、すべての選択肢ボタンを無効化
+    const buttons = document.querySelectorAll("#options-list button");
+    buttons.forEach(btn => btn.disabled = true);
+    
+    // 正誤判定と解説の表示
+    if (selectedIndex === currentQuiz.answer) {
+        score++;
+        feedbackBox.innerText = `正解\n\n解説: ${currentQuiz.rationale}`;
+    } else {
+        feedbackBox.innerText = `不正解：正解：「${currentQuiz.options[currentQuiz.answer]}」でした。\n\n解説: ${currentQuiz.rationale}`;
+    }
+    
+    feedbackBox.style.display = "block";
+    document.getElementById("next-button").style.display = "inline-block";
+}
+
+// 次の問題へ進む、または結果を表示する処理
+function nextQuestion() {
+    currentQuestionIndex++;
+    
+    if (currentQuestionIndex < quizData.length) {
+        loadQuiz();
+    } else {
+        // 全問終了したらクイズ画面を隠し、結果画面を表示
+        document.getElementById("quiz-box").style.display = "none";
+        document.getElementById("score-box").style.display = "block";
+        document.getElementById("final-score").innerText = `${quizData.length}問中、${score}問正解`;
+    }
+}
+
+// クイズを最初からやり直す処理
+function restartQuiz() {
+    currentQuestionIndex = 0;
+    score = 0;
+    document.getElementById("quiz-box").style.display = "block";
+    document.getElementById("score-box").style.display = "none";
+    loadQuiz();
+}
+
+// ページ読み込み時にクイズを開始
+window.onload = loadQuiz;
+
+</script>
 </html>
