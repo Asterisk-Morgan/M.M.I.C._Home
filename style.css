@@ -1,0 +1,74 @@
+/* Basic heading */
+
+body{
+	background-color:#fff9e2 ;
+}
+
+
+h1 {
+	background:linear-gradient(90deg, #1d50a2 0% , #51318f 5%, #b7180c 10%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color:transparent;
+	font-weight: bold;
+}
+
+/* Link variants */
+a.target-link {
+	text-decoration: none;
+}
+
+a.target-link.black {
+	color: rgb(0, 89, 255)55);
+}
+
+a.target-link.blue {
+	color: rgb(0, 8, 255);
+}
+
+/* Circular animated background */
+.circle {
+	width: 600px;
+	height: 600px;
+	border-radius: 50%;
+	overflow: hidden;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.circle .gradient {
+	position: absolute;
+	top: -50%;
+	left: -50%;
+	width: 200%;
+	height: 200%;
+	background: conic-gradient(blue, purple, red, blue);
+	animation: rotate 1s linear infinite;
+	z-index: 1;
+}
+
+.circle.text-copperplate {
+	font-family: "Copperplate Gothic Bold";
+}
+#char-display {
+	position: relative;
+	z-index: 2;
+	color: white;
+	font-size: 200px;
+	font-weight: bold;
+	font-family: sans-serif;
+	text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+@keyframes rotate {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+/* Small responsive tweak */
+@media (max-width: 700px) {
+	.circle { width: 300px; height: 300px; }
+	#char-display { font-size: 100px; }
+}
