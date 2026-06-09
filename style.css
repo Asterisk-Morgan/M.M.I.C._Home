@@ -31,7 +31,21 @@ img {
 	max-width: 100%;
 	height: auto;
 	display: block;
-	margin: 0 auto;
+	margin: 0;
+}
+
+.img-left {
+    align-self: flex-start;
+    width: 100%;
+    max-width: 720px;
+    text-align: left !important;
+    margin: 0 !important;
+}
+
+.img-left img {
+    margin: 0 !important;
+    display: inline-block !important;
+    float: none !important;
 }
 
 /* Circular animated background */
@@ -79,4 +93,99 @@ img {
 @media (max-width: 700px) {
 	.circle { width: 300px; height: 300px; }
 	#char-display { font-size: 100px; }
+}
+
+/* Page layout and quiz styles */
+body {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: flex-start;
+	padding: 2rem;
+	box-sizing: border-box;
+	min-height: 100vh;
+}
+
+#fortune {
+	font-size: 1.1rem;
+	font-weight: 700;
+	margin: 0.5rem 0 1.5rem 0;
+}
+
+#quiz-box {
+	width: 100%;
+	max-width: 720px;
+	background: rgba(255,255,255,0.95);
+	color: #111;
+	border-radius: 10px;
+	padding: 1.25rem 1.5rem;
+	box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+	margin-bottom: 1rem;
+}
+
+#quiz-box h2#progress {
+	margin: 0 0 0.5rem 0;
+	font-size: 1rem;
+	color: #333;
+}
+
+#question-text {
+	margin: 0.25rem 0 1rem 0;
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+#options-list {
+	list-style: none;
+	padding: 0;
+	margin: 0 0 1rem 0;
+}
+
+#options-list li {
+	margin: 0.4rem 0;
+}
+
+#options-list button {
+	width: 100%;
+	padding: 0.6rem 0.8rem;
+	border-radius: 6px;
+	border: 1px solid rgba(0,0,0,0.08);
+	background: linear-gradient(180deg,#fff,#f6f6f6);
+	cursor: pointer;
+	font-weight: 600;
+	text-align: left;
+}
+
+#options-list button:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+#feedback-box {
+	padding: 0.75rem 1rem;
+	background: #f8f8ff;
+	border-left: 4px solid #6a8cff;
+	border-radius: 6px;
+	white-space: pre-wrap;
+	margin-bottom: 0.75rem;
+}
+
+#next-button {
+	padding: 0.5rem 0.9rem;
+	border-radius: 6px;
+	background: #2b6df6;
+	color: white;
+	border: none;
+	cursor: pointer;
+}
+
+#score-box {
+	width: 100%;
+	max-width: 720px;
+	text-align: center;
+}
+
+@media (max-width: 480px) {
+	#quiz-box { padding: 1rem; }
+	#options-list button { font-size: 0.95rem; }
 }
