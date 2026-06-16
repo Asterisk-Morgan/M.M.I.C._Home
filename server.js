@@ -16,7 +16,8 @@ const mimeTypes = {
   '.svg': 'image/svg+xml',
   '.json': 'application/json; charset=utf-8',
   '.ico': 'image/x-icon',
-  '.txt': 'text/plain; charset=utf-8'
+  '.txt': 'text/plain; charset=utf-8',
+  '.mp3': 'audio/mpeg'
 };
 
 function getContentType(filePath) {
