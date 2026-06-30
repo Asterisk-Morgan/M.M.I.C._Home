@@ -224,43 +224,55 @@ const madnessEffects = [
   "破壊衝動", "錯覚", "反響", "フェティッシュ", "カタトニア"
 ];
 
-// カウント用の変数を用意
+// カウント用の変数
 let criticalCount = 0;
 let fumbleCount = 0;
 
-// 回数を増やして100回振ってみます（10回に戻しても動きます）
+// 発生した狂気の名前だけを記録する配列
+const occurredMadness = [];
+
+// 100回振る
 for (let i = 0; i < 100; i++) {
   const roll = Math.floor(Math.random() * 100) + 1;
   
   if (roll <= 6) {
     diceResults.push(`${roll}：クリティカル`);
-    criticalCount++; // クリティカルをカウント
+    criticalCount++;
   } 
   else if (roll >= 96) {
     const fumbleRoll = Math.floor(Math.random() * 10);
     const effect = madnessEffects[fumbleRoll];
     
     diceResults.push(`${roll}：ファンブル：${effect}`);
-    fumbleCount++; // ファンブルをカウント
+    occurredMadness.push(effect); // 発生した狂気をリストに追加
+    fumbleCount++;
   } 
   else {
     diceResults.push(`${roll}`);
   }
 }
 
-// --- ここから相殺の計算ロジック ---
+// --- 出力処理 ---
 
 console.log("【ダイス結果】", diceResults);
 console.log(`【判定結果】クリティカル: ${criticalCount}回、ファンブル: ${fumbleCount}回`);
 
-// どちらも1回以上出ている場合（相殺が発生する）
+// ★追加：ファンブルにより出た狂気を表示する項目
+console.log("【発生した狂気】");
+if (occurredMadness.length > 0) {
+  // 配列の中身をカンマ区切りで綺麗に繋げて表示する
+  console.log(occurredMadness.join("、"));
+} else {
+  console.log("なし");
+}
+
+// 相殺の計算ロジック
 if (criticalCount > 0 && fumbleCount > 0) {
-  // 小さい方の数字が「相殺数」になる
   const offset = Math.min(criticalCount, fumbleCount);
   const finalCritical = criticalCount - offset;
   const finalFumble = fumbleCount - offset;
   
-  console.log(`相殺: ${offset}`);
+  console.log(`【相殺結果】相殺: ${offset}`);
   
   if (finalCritical > 0) {
     console.log(`残った結果：クリティカル ${finalCritical}`);
@@ -269,9 +281,9 @@ if (criticalCount > 0 && fumbleCount > 0) {
   } else {
     console.log("残った結果：すべて相殺されました");
   }
+} else {
+  console.log("【相殺結果】相殺なし");
 }
-
-
 
 
 </script>
