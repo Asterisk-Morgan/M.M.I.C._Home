@@ -86,10 +86,66 @@
     <script>
   console.log("M.M.I.C.Console");
 
-  greet("Medalist");
-  function greet(name) {
-  console.log("Welcome to "+ name  );
-}
+  //ログイン部＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+(function() {
+  const CORRECT_PASSWORD = "0516";
+  const originalLog = console.log;
+  let isUnlocked = false;
+  let userName = "";
+  
+  // 🔒 ロック中に他から流れてきたログを一時的に貯めておくためのバケツ（配列）
+  const logQueue = [];
+
+  // ⚠️ console.log を上書き（インターセプト）
+  console.log = function(...args) {
+    if (isUnlocked) {
+      // ロック解除後は通常通り表示
+      originalLog.apply(console, args);
+    } else {
+      // 💡 ロック中は表示せず、配列に引数をそのまま保存しておく
+      logQueue.push(args);
+    }
+  };
+
+  // 【ユーザー名入力用】
+  window.n = function(name) {
+    userName = name;
+    // システムの案内だけは特別に即時出力（originalLog を使用）
+    originalLog(`%c[System]: ユーザー名「${userName}」を認証。`, "color: #00bcd4; font-weight: bold;");
+    originalLog("以下のコードをコピーして、'' の中にパスワードを入れて実行してください。");
+    originalLog("p('')");
+  };
+
+  // 【パスワード入力用】
+  window.p = function(password) {
+    if (password === CORRECT_PASSWORD) {
+      isUnlocked = true;
+      console.log = originalLog; // console.log の機能を元に戻す
+      
+      originalLog("%c[System]: 認証成功。"+"Welcome to " + userName, "color: #4caf50; font-weight: bold;");
+      originalLog("--------------------------------------------------");
+
+      // 🔄 貯まっていたログを一気に放出
+      logQueue.forEach(args => {
+        originalLog.apply(console, args);
+      });
+      
+      // クリーンアップ
+      delete window.n;
+      delete window.p;
+    } else {
+      originalLog(`%c[Error]: パスワードが違います。もう一度試してください。`, "color: #f44336; font-weight: bold;");
+      originalLog("p('')");
+    }
+  };
+
+  // 最初の案内
+  originalLog("%c[System]: Security-Clearance", "color: #ff9800; font-weight: bold;");
+  originalLog("以下のコードをコピーして、'' の中にあなたの名前を入れて実行してください。");
+  originalLog("n('')");
+})();
+//==================================================
 
   const fortunes = ["亜鉛。ダイカストなどに利用される", "ポリカ。制圧装備に利用される。", "チタン。硬く軽いが加工に難がある。", "ABS。アクリロニトリル（A）、ブタジエン（B）、スチレン（S）の3種類の成分を組み合わせた合成樹脂。LEGO©などにも利用されている。", "ベークライト。最初のプラスチック","スターリングシルバー。魔除けの性質を持つ","真鍮。古来より邪気を払い、幸運や精神的な活力を呼び込む「魔除けの金属」として親しまれてきた。","ブロンズ 「古代の叡智」「強固な守護」「霊魂との交信」を象徴する、非常に歴史の古い神聖な金属","アルミ。地球上で最も豊富に存在する金属元素の一つです。軽くて加工しやすく、電気や熱をよく伝えるため、飲料缶から航空機まで幅広い用途で活用されている。","。鉄に炭素を添加して強度と硬度を向上させた金属素材。","コルタン。コンゴにて紛争や違法労働を引き起こしている「悪魔の石」","タングステン。すべての金属の中で最も高い融点（3,400℃）を持つ金属。","メタルコンポジット。金属基複合材料 / MMC：Metal Matrix Composite)の事であり、ベースとなる金属（マトリックス/母材）の中に、異種材料（主にセラミックスや炭素繊維などの強化材）を溶け込ませて一体化させた先進材料。","冷たい鉄。「妖精、悪霊、魔術を完全に無効化する最強の防壁」として恐れられ、崇められてきた特別な金属。真鍮やブロンズが魔術的なエネルギーを「増幅・調和」させるのに対し、冷たい鉄はあらゆる超自然的な力を「拒絶・消滅」させる真逆の性質を持つ。"];
   const index = Math.floor(Math.random() * fortunes.length);
