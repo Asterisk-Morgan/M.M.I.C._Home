@@ -216,5 +216,63 @@ if (playButton) {
     });
 }
 
+
+
+const diceResults = [];
+const madnessEffects = [
+  "ショック", "パニック", "ヒステリー", "会話機能の低下", "恐怖症",
+  "破壊衝動", "錯覚", "反響", "フェティッシュ", "カタトニア"
+];
+
+// カウント用の変数を用意
+let criticalCount = 0;
+let fumbleCount = 0;
+
+// 回数を増やして100回振ってみます（10回に戻しても動きます）
+for (let i = 0; i < 100; i++) {
+  const roll = Math.floor(Math.random() * 100) + 1;
+  
+  if (roll <= 6) {
+    diceResults.push(`${roll}：クリティカル`);
+    criticalCount++; // クリティカルをカウント
+  } 
+  else if (roll >= 96) {
+    const fumbleRoll = Math.floor(Math.random() * 10);
+    const effect = madnessEffects[fumbleRoll];
+    
+    diceResults.push(`${roll}：ファンブル：${effect}`);
+    fumbleCount++; // ファンブルをカウント
+  } 
+  else {
+    diceResults.push(`${roll}`);
+  }
+}
+
+// --- ここから相殺の計算ロジック ---
+
+console.log("【ダイス結果】", diceResults);
+console.log(`【判定結果】クリティカル: ${criticalCount}回、ファンブル: ${fumbleCount}回`);
+
+// どちらも1回以上出ている場合（相殺が発生する）
+if (criticalCount > 0 && fumbleCount > 0) {
+  // 小さい方の数字が「相殺数」になる
+  const offset = Math.min(criticalCount, fumbleCount);
+  const finalCritical = criticalCount - offset;
+  const finalFumble = fumbleCount - offset;
+  
+  console.log(`相殺: ${offset}`);
+  
+  if (finalCritical > 0) {
+    console.log(`残った結果：クリティカル ${finalCritical}`);
+  } else if (finalFumble > 0) {
+    console.log(`残った結果：ファンブル ${finalFumble}`);
+  } else {
+    console.log("残った結果：すべて相殺されました");
+  }
+}
+
+
+
+
 </script>
 </html>
