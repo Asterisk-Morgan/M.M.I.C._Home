@@ -6,7 +6,6 @@ body{
 
 }
 
-
 h1 {
 	background:linear-gradient(90deg, #1d50a2 0% , #51318f 5%, #b7180c 10%);
 	-webkit-background-clip: text;
@@ -191,3 +190,4 @@ body {
 	#quiz-box { padding: 1rem; }
 	#options-list button { font-size: 0.95rem; }
 }
+

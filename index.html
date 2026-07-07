@@ -61,6 +61,8 @@
         ホラーゲーム
     </a>
 
+    <h4 id="message">100面ダイス</h4>
+    <button id="my-button">1d100</button>
 
     <h2>今回の材質</h2>
     <p id="fortune">ここに結果が出ます</p>
@@ -276,9 +278,19 @@ if (playButton) {
         }
     });
 }
+//===========================
+function handleClick() {
+  // カンマとスペースで結合する
+  document.getElementById("message").textContent = diceResults.join(", ");
+}
 
+const button = document.getElementById("my-button");
+button.addEventListener("click", handleClick);
+//===========================
 // --- ダイスロール ---
 
+
+//===========================
 const diceResults = [];
 const madnessEffects = [
   "ショック", "パニック", "ヒステリー", "会話機能の低下", "恐怖症",
