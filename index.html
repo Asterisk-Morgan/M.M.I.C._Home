@@ -64,6 +64,10 @@
     <h4 id="message">100面ダイス</h4>
     <button id="my-button">1d100</button>
 
+    <!-- ★ここを追加：結果をまとめて表示するエリア -->
+    <div id="result-box" style="margin-top: 20px; white-space: pre-wrap; line-height: 1.6;"></div>
+    
+
     <h2>今回の材質</h2>
     <p id="fortune">ここに結果が出ます</p>
 
@@ -278,85 +282,99 @@ if (playButton) {
         }
     });
 }
-//===========================
-function handleClick() {
-  // カンマとスペースで結合する
-  document.getElementById("message").textContent = diceResults.join(", ");
-}
-
+//==================================================
+// ボタンと結果表示エリアを取得
 const button = document.getElementById("my-button");
-button.addEventListener("click", handleClick);
-//===========================
-// --- ダイスロール ---
+const resultBox = document.getElementById("result-box");
 
-
-//===========================
-const diceResults = [];
+// 狂気の効果リスト
 const madnessEffects = [
   "ショック", "パニック", "ヒステリー", "会話機能の低下", "恐怖症",
   "破壊衝動", "錯覚", "反響", "フェティッシュ", "カタトニア"
 ];
 
-// カウント用の変数
-let criticalCount = 0;
-let fumbleCount = 0;
+// --- ダイスロール（ボタンを押した時の処理） ---
+function handleClick() {
+  // ボタンを押すたびにリセット
+  const diceResults = [];
+  let criticalCount = 0;
+  let fumbleCount = 0;
+  const occurredMadness = [];
 
-// 発生した狂気の名前だけを記録する配列
-const occurredMadness = [];
+  // 100面ダイスを100回振る
+  for (let i = 0; i < 100; i++) {
+    const roll = Math.floor(Math.random() * 100) + 1;
 
-// 100回振る
-for (let i = 0; i < 100; i++) {
-  const roll = Math.floor(Math.random() * 100) + 1;
-  
-  if (roll <= 5) {
-    diceResults.push(`${roll}：クリティカル`);
-    criticalCount++;
-  } 
-  else if (roll >= 96) {
-    const fumbleRoll = Math.floor(Math.random() * 10);
-    const effect = madnessEffects[fumbleRoll];
-    
-    diceResults.push(`${roll}：ファンブル：${effect}`);
-    occurredMadness.push(effect); // 発生した狂気をリストに追加
-    fumbleCount++;
-  } 
-  else {
-    diceResults.push(`${roll}`);
+    if (roll <= 5) {
+      diceResults.push(`${roll}：クリティカル`);
+      criticalCount++;
+    } 
+    else if (roll >= 96) {
+      const fumbleRoll = Math.floor(Math.random() * 10);
+      const effect = madnessEffects[fumbleRoll];
+      
+      diceResults.push(`${roll}：ファンブル：${effect}`);
+      occurredMadness.push(effect); // 発生した狂気をリストに追加
+      fumbleCount++;
+    } 
+    else {
+      diceResults.push(`${roll}`);
+    }
   }
-}
 
-// --- 出力処理 ---
+  // --- 【画面表示用のテキスト組み立て】 ---
+  let output = "";
 
-console.log("【ダイス結果】", diceResults);
-console.log(`【判定結果】クリティカル: ${criticalCount}回、ファンブル: ${fumbleCount}回`);
+  // 1. ダイスロール結果
+  output += `【ダイスロール】\n${diceResults.join(", ")}\n`;
 
-// ★追加：ファンブルにより出た狂気を表示する項目
-console.log("【発生した狂気】");
-if (occurredMadness.length > 0) {
-  // 配列の中身をカンマ区切りで綺麗に繋げて表示する
-  console.log(occurredMadness.join("、"));
-} else {
-  console.log("なし");
-}
+  // 2. 判定結果
+  output += `【判定結果】クリティカル: ${criticalCount}回、ファンブル: ${fumbleCount}回\n`;
 
-// 相殺の計算ロジック
-if (criticalCount > 0 && fumbleCount > 0) {
-  const offset = Math.min(criticalCount, fumbleCount);
-  const finalCritical = criticalCount - offset;
-  const finalFumble = fumbleCount - offset;
-  
-  console.log(`【相殺結果】相殺: ${offset}`);
-  
-  if (finalCritical > 0) {
-    console.log(`残った結果：クリティカル ${finalCritical}`);
-  } else if (finalFumble > 0) {
-    console.log(`残った結果：ファンブル ${finalFumble}`);
+  // 3. 発生した狂気（個数を集計する）
+  output += `【発生した狂気】`;
+  if (occurredMadness.length > 0) {
+    // 狂気ごとに回数をカウント（例: {"フェティッシュ": 3, "破壊衝動": 1}）
+    const counts = {};
+    for (const effect of occurredMadness) {
+      counts[effect] = (counts[effect] || 0) + 1;
+    }
+    // 「効果名 + 回数」の文字列にして配列化（1回の場合は数字を省略）
+    const madnessTextList = Object.keys(counts).map(effect => {
+      return counts[effect] > 1 ? `${effect}${counts[effect]}` : effect;
+    });
+    output += madnessTextList.join("、") + "\n";
   } else {
-    console.log("残った結果：すべて相殺されました");
+    output += "なし\n";
   }
-} else {
-  console.log("【相殺結果】相殺なし");
+
+  // 4. 相殺結果
+  if (criticalCount > 0 && fumbleCount > 0) {
+    const offset = Math.min(criticalCount, fumbleCount);
+    const finalCritical = criticalCount - offset;
+    const finalFumble = fumbleCount - offset;
+    
+    output += `【相殺結果】相殺: ${offset}\n`;
+    
+    if (finalCritical > 0) {
+      output += `残った結果：クリティカル ${finalCritical}\n`;
+    } else if (finalFumble > 0) {
+      output += `残った結果：ファンブル ${finalFumble}\n`;
+    } else {
+      output += "残った結果：すべて相殺されました\n";
+    }
+  } else {
+    output += "【相殺結果】相殺なし\n";
+  }
+
+  // ★最後にまとめて画面の result-box に表示する
+  resultBox.textContent = output;
 }
+
+// ボタンにクリックイベントを設定
+button.addEventListener("click", handleClick);
+
+
 
 
 </script>
