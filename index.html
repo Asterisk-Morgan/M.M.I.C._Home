@@ -295,7 +295,6 @@ const madnessEffects = [
 
 // --- ダイスロール（ボタンを押した時の処理） ---
 function handleClick() {
-  // ボタンを押すたびにリセット
   const diceResults = [];
   let criticalCount = 0;
   let fumbleCount = 0;
@@ -305,16 +304,17 @@ function handleClick() {
   for (let i = 0; i < 100; i++) {
     const roll = Math.floor(Math.random() * 100) + 1;
 
+    // ★ここでHTMLタグを使って文字に色をつける（CSSの inline style を使用）
     if (roll <= 5) {
-      diceResults.push(`${roll}：クリティカル`);
+      diceResults.push(`<span style="color: blue; font-weight: bold;">${roll}：クリティカル</span>`);
       criticalCount++;
     } 
     else if (roll >= 96) {
       const fumbleRoll = Math.floor(Math.random() * 10);
       const effect = madnessEffects[fumbleRoll];
       
-      diceResults.push(`${roll}：ファンブル：${effect}`);
-      occurredMadness.push(effect); // 発生した狂気をリストに追加
+      diceResults.push(`<span style="color: red; font-weight: bold;">${roll}：ファンブル：${effect}</span>`);
+      occurredMadness.push(effect);
       fumbleCount++;
     } 
     else {
@@ -322,30 +322,30 @@ function handleClick() {
     }
   }
 
-  // --- 【画面表示用のテキスト組み立て】 ---
+  // --- 画面表示用のテキスト組み立て ---
   let output = "";
 
   // 1. ダイスロール結果
-  output += `【ダイスロール】\n${diceResults.join(", ")}\n`;
+  output += `【ダイスロール】<br>${diceResults.join(", ")}<br><br>`;
 
-  // 2. 判定結果
-  output += `【判定結果】クリティカル: ${criticalCount}回、ファンブル: ${fumbleCount}回\n`;
+  // 2. 判定結果（ここもついでに色付けすると見やすいです！）
+  output += `【判定結果】クリティカル: <span style="color: blue; font-weight: bold;">${criticalCount}回</span>、ファンブル: <span style="color: red; font-weight: bold;">${fumbleCount}回</span><br><br>`;
 
-  // 3. 発生した狂気（個数を集計する）
+  // 3. 発生した狂気
   output += `【発生した狂気】`;
   if (occurredMadness.length > 0) {
-    // 狂気ごとに回数をカウント（例: {"フェティッシュ": 3, "破壊衝動": 1}）
     const counts = {};
     for (const effect of occurredMadness) {
       counts[effect] = (counts[effect] || 0) + 1;
     }
-    // 「効果名 + 回数」の文字列にして配列化（1回の場合は数字を省略）
     const madnessTextList = Object.keys(counts).map(effect => {
-      return counts[effect] > 1 ? `${effect}${counts[effect]}` : effect;
+      // 狂気の名前も赤色に
+      const text = counts[effect] > 1 ? `${effect}${counts[effect]}` : effect;
+      return `<span style="color: red;">${text}</span>`;
     });
-    output += madnessTextList.join("、") + "\n";
+    output += madnessTextList.join("、") + "<br><br>";
   } else {
-    output += "なし\n";
+    output += "なし<br><br>";
   }
 
   // 4. 相殺結果
@@ -354,26 +354,25 @@ function handleClick() {
     const finalCritical = criticalCount - offset;
     const finalFumble = fumbleCount - offset;
     
-    output += `【相殺結果】相殺: ${offset}\n`;
+    output += `【相殺結果】相殺: ${offset}<br>`;
     
     if (finalCritical > 0) {
-      output += `残った結果：クリティカル ${finalCritical}\n`;
+      output += `残った結果：<span style="color: blue; font-weight: bold;">クリティカル ${finalCritical}</span><br>`;
     } else if (finalFumble > 0) {
-      output += `残った結果：ファンブル ${finalFumble}\n`;
+      output += `残った結果：<span style="color: red; font-weight: bold;">ファンブル ${finalFumble}</span><br>`;
     } else {
-      output += "残った結果：すべて相殺されました\n";
+      output += "残った結果：すべて相殺されました<br>";
     }
   } else {
-    output += "【相殺結果】相殺なし\n";
+    output += "【相殺結果】相殺なし<br>";
   }
 
-  // ★最後にまとめて画面の result-box に表示する
-  resultBox.textContent = output;
+  // ★テキストではなく HTML として画面に出力する
+  resultBox.innerHTML = output;
 }
 
 // ボタンにクリックイベントを設定
 button.addEventListener("click", handleClick);
-
 
 
 
