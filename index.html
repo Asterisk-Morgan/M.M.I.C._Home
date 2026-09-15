@@ -49,7 +49,14 @@
         <img src="image.png" alt="QRコード" style="margin:0; display:inline-block;">
     </p>
 
+        <!-- 名前入力欄 -->
+     <input type="text" id="name-input" placeholder="名前を入力">
+  <button id="greet-btn">確定</button>
+  <p id="greet-result"></p>
 
+    <!-- ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ -->
+
+    <!-- 遷移ページ -->
     <a class="target-link black" href="https://asterisk-morgan.github.io/Medal_Atelier_Creater/">
         メダル工房
     </a>
@@ -64,19 +71,29 @@
     <a class="target-link black" href="https://asterisk-morgan.github.io/BoxDoll/Index.html">
         パズルゲーム
     </a>
+    <!-- ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ -->
 
-
-    
-
-    <h2 id="message">100面ダイス</h2>
-    <button id="my-button">1d100</button>
-
-    <!-- ★ここを追加：結果をまとめて表示するエリア -->
-    <div id="result-box" style="margin-top: 20px; white-space: pre-wrap; line-height: 1.6;"></div>
-    
-
-    <h2>今回の材質</h2>
+        <h2>今回の材質</h2>
     <p id="fortune">ここに結果が出ます</p>
+    <!-- ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ -->
+
+        <!-- プリントリスト -->
+    <h2>印刷物リスト</h2>
+      
+    <div>
+      <select id="input-category" name="分類">
+        <option value="">カテゴリを選択</option>
+        <option value="メダル">メダル</option>
+        <option value="カートリッジ">カートリッジ</option>
+        <option value="その他">その他</option>
+      </select>
+      <input type="text" id="input-type" placeholder="仕様">
+      <input type="text" id="input-caption" placeholder="概要">
+      <button id="add-btn">追加する</button>
+    </div>
+
+    <ul id="Printer-list"></ul>
+    <!-- ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ -->
 
     <!-- Quiz UI -->
     <div id="quiz-box">
@@ -92,7 +109,21 @@
         <p id="final-score"></p>
         <button onclick="restartQuiz()">再検証</button>
     </div>
+    <!-- ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ -->
 
+
+    <!-- 100面ダイス -->
+    <h2 id="message">100面ダイス</h2>
+    <button id="my-button">1d100</button>
+
+    <!-- ★ここを追加：結果をまとめて表示するエリア -->
+    <div id="result-box" style="margin-top: 20px; white-space: pre-wrap; line-height: 1.6;"></div>
+    <!-- ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ -->
+
+
+
+
+  <!--＝＝＝＝ここからスクリプト＝＝＝＝＝＝＝＝＝＝＝＝＝＝-->
     <script>
   console.log("M.M.I.C.Console");
 
@@ -390,6 +421,57 @@ const me = {
 console.log(me.name);          // "MM"
 console.log(me.favoriteColor); // "青紫赤黒"
 console.log(me.hobby);         // "メダル"
+
+//=======名称入力欄＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+document.getElementById("greet-btn").addEventListener("click", () => {
+      const name = document.getElementById("name-input").value;
+      document.getElementById("greet-result").textContent = `ようこそ、${name}`;
+    });
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+//リストフォーム
+const Printer = [
+      { category: "メダル", type: "Catastrophe", caption: "第一世代型試作モデル" },
+      { category: "メダル",     type: "Day-Dream",     caption: "第二世代型生体モデル" },
+      { category: "カートリッジ",   type: "Red",  caption: "Gen.1用MIL仕様" },
+      { category: "カートリッジ",   type: "Cyan", caption: "Gen.2用" },
+      { category: "カートリッジ",   type: "Cyan-Seal", caption: "Gen.2用防水仕様" }
+    ];
+
+    const ul = document.getElementById("Printer-list");
+
+function render() {
+  ul.innerHTML = "";
+  for (let i = 0; i < Printer.length; i++) {
+    const item = Printer[i];
+    let displayType = item.type;
+
+   // 条件：もしカテゴリが「メダル」か「カートリッジ」（または "medal" か "cartridge"）であれば、無条件で type の前に「Type:」を追加
+    if (item.category === "メダル" || item.category === "カートリッジ" || item.category === "medal" || item.category === "cartridge") {
+      displayType = `Type:${displayType}`;
+    }
+
+    const li = document.createElement("li");
+    // 組み立てる部分で、加工した displayType を使用します
+    li.textContent = `${item.category}：${displayType}：概要[${item.caption}]`;
+    ul.appendChild(li);
+  }
+}
+render();
+
+document.getElementById("add-btn").addEventListener("click", () => {
+  const category = document.getElementById("input-category").value;
+  const type = document.getElementById("input-type").value;
+  const caption = document.getElementById("input-caption").value;
+
+    if (category === "" || type === "") {
+    alert("カテゴリと仕様を入力してください");
+    return;
+  }
+
+  Printer.push({ category, type, caption });
+  render();
+});
 
 </script>
 </html>
