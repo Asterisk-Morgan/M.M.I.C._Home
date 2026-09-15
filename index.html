@@ -460,17 +460,31 @@ function render() {
 render();
 
 document.getElementById("add-btn").addEventListener("click", () => {
-  const category = document.getElementById("input-category").value;
-  const type = document.getElementById("input-type").value;
-  const caption = document.getElementById("input-caption").value;
+ // 1. 各入力欄から要素（Element）自体を取得する
+  const categorySelect = document.getElementById("input-category");
+  const typeInput = document.getElementById("input-type");
+  const captionInput = document.getElementById("input-caption");
 
-    if (category === "" || type === "") {
+  // 2. 入力された値（value）を読み取る
+  const category = categorySelect.value;
+  const type = typeInput.value;
+  const caption = captionInput.value;
+
+ // エラーチェック（バリデーション）
+  if (category === "" || type === "") {
     alert("カテゴリと仕様を入力してください");
     return;
   }
 
+  // データベース（配列）にデータを追加
   Printer.push({ category, type, caption });
   render();
+
+  // 【追加機能】連続入力を防ぐため、フォームを一括クリアする
+  categorySelect.value = ""; // コンボボックスを未選択（初期状態）に戻す
+  typeInput.value = "";     // 仕様テキストボックスを空にする
+  captionInput.value = "";  // 概要テキストボックスを空にする
+
 });
 
 </script>
